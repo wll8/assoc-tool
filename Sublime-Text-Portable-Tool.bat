@@ -1,13 +1,11 @@
 @echo off&color 2f&mode con lines=45 cols=145&title %exe_name% 便携版工具
+set exe_path=notepad2.exe
+set exe_name=%exe_path%
+set ext_list=ext.txt
 
-set exe_path="E:\git2\bat_tool\notepad 2.exe"
-REM 取得文件名
-set exe_name=notepad2notepad2
-REM 取当path下的ext.txt文件
-set ext_path=E:\git2\bat_tool\ext.txt
 
 if not exist %exe_path% (echo 目标程序不存在，请把本工具复制到 %exe_path% 所在的目录运行！ &pause>nul&exit)
-if not exist %ext_path% (echo 目标程序不存在，请把本工具复制到 %ext_path% 所在的目录运行！ &pause>nul&exit)
+if not exist %ext_list% (echo 目标程序不存在，请把本工具复制到 %ext_list% 所在的目录运行！ &pause>nul&exit)
 
 
 echo.
@@ -16,7 +14,7 @@ echo.
 echo 操作序号：
 echo   1: 添加右键菜单;
 echo   2: 删除右键菜单;
-echo   3: 关联扩展名(扩展名保存在同目录的 %ext_path% 文件中);
+echo   3: 关联扩展名(扩展名保存在同目录的 %ext_list% 文件中);
 echo   4: 删除扩展名;
 echo   5: 退出;
 echo.
@@ -47,9 +45,7 @@ echo.&echo 已成功卸载右键菜单 &echo.&goto begin
 reg add "hkcr\text_file" /ve /d "文本文档" /f
 reg add "hkcr\text_file\defaulticon" /ve /d "%cd%\%exe_path%" /f
 reg add "hkcr\text_file\shell\open\command" /ve /d "%cd%\%exe_path% """%%1%"""" /f
-echo reg add "hkcr\text_file\shell\open\command" /ve /d "%cd%\%exe_path% """%%1%"""" /f
-pause&exit
-for /f "eol=;" %%e in (%ext_path%) do (
+for /f "eol=;" %%e in (%ext_list%) do (
     (for /f "skip=2 tokens=1,2,* delims= " %%a in ('reg query "hkcr\.%%e" /ve') do (
       if not "%%c" == "text_file" (
         reg add "hkcr\.%%e" /v "text_backup" /d "%%c" /f
@@ -63,7 +59,7 @@ echo.&echo 已成功注册扩展名 &echo.&goto begin
 
 :un_text_file
 reg delete "hkcr\text_file" /f
-for /f "eol=;" %%e in (%ext_path%) do (
+for /f "eol=;" %%e in (%ext_list%) do (
     (for /f "skip=2 tokens=1,2,* delims= " %%a in ('reg query "hkcr\.%%e" /v "text_backup"') do (
       reg add "hkcr\.%%e" /ve /d "%%c" /f
       reg delete "hkcr\.%%e" /v "text_backup" /f

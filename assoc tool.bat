@@ -9,13 +9,12 @@ echo 2 关联扩展名(与程序同目录的 ext.txt 文件中)
 echo 3 关联图标
 echo 4 取消关联扩展名
 echo 5 取消添加右键菜单
-echo 6 exit
+echo 6 退出
 echo.
 
 
 echo 拖入程序后，点击此窗口按 enter 键：
-REM set /p exe_path=
-set exe_path="E:\git2\bat tool\notepad 2.exe"
+set /p exe_path=
 for %%i in (%exe_path%) do (set exe_name=%%~nxi)
 for %%i in (%exe_path%) do (set temp=%%~dpi)
 set exe_name=%exe_name:.exe=%
@@ -61,9 +60,9 @@ echo.&echo 关联图标完成 &echo.&goto begin
 :reg_ext
 for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
   (
-    reg add "hkcr\%ext_tag%.%%e" /ve /d "%%e" /f
-    reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%exe_path%" /f
-    reg add "hkcr\%ext_tag%.%%e\shell\open\command" /ve /d """"%exe_path%""" """%%1%"""" /f
+    reg add "hkcr\%ext_tag%.%%e" /ve /d "%%e" /f >nul 2>nul
+    reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%exe_path%" /f >nul 2>nul
+    reg add "hkcr\%ext_tag%.%%e\shell\open\command" /ve /d """"%exe_path%""" """%%1%"""" /f >nul 2>nul
     for /f "skip=2 tokens=1,2,* delims= " %%a in ('reg query "hkcr\.%%e" /ve') do (
       if not "%%c" == "%ext_tag%" (
         reg add "hkcr\.%%e" /v "ext_backup" /d "%%c" /f >nul 2>nul

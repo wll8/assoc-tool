@@ -10,6 +10,7 @@ set exe_name=%exe_name:.exe=%
 set exe_path=%exe_path:"=%
 set ext_path=%temp%ext.txt
 set ext_tag=text_file
+set ico_size=64
 
 call :doc &if not exist "%ext_path%" (echo  注意：扩展名列表文件 "%ext_path%" 不存在。&pause>nul&exit)
 
@@ -37,8 +38,8 @@ call :doc &echo.&echo  * 取消添加右键菜单完成 &echo.&goto begin
 :reg_ico
 for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
   (
-    if exist "%cd%\icons\%%e.ico" (
-      reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%%e.ico" /f >nul 2>nul
+    if exist "%cd%\icons\%ico_size%\%%e.ico" (
+      reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%ico_size%\%%e.ico" /f >nul 2>nul
     )
   )
 )

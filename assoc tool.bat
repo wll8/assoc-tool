@@ -4,13 +4,14 @@ echo.
 echo.-------------- 文件关联工具使用说明 --------------
 echo.
 echo 操作序号：
-echo 1 goto reg_menu
-echo 2 goto reg_ext
-echo 3 goto reg_ico
-echo 4 goto un_reg_ext
-echo 5 goto un_reg_menu
+echo 1 添加右键菜单
+echo 2 关联扩展名(与程序同目录的 ext.txt 文件中)
+echo 3 关联图标
+echo 4 取消关联扩展名
+echo 5 取消添加右键菜单
 echo 6 exit
 echo.
+
 
 echo 拖入程序后，点击此窗口按 enter 键：
 REM set /p exe_path=
@@ -39,21 +40,23 @@ goto begin
 :reg_menu
 reg add "hkcr\*\shell\%exe_name%" /ve /d "使用 %exe_name% 打开" /f >nul 2>nul
 reg add "hkcr\*\shell\%exe_name%\command" /ve /d "%exe_path% """%%1%"""" /f >nul 2>nul
-echo.&echo 注册右键菜单完成 &echo.&goto begin
+echo.&echo 添加右键菜单完成 &echo.&goto begin
 
 :un_reg_menu
 reg delete "hkcr\*\shell\%exe_name%" /f >nul 2>nul
-echo.&echo 卸载右键菜单完成 &echo.&goto begin
+echo.&echo 取消添加右键菜单完成 &echo.&goto begin
 
 :reg_ico
 for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
   (
-    reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%%e.ico" /f
-    echo reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%%e.ico" /f
+    if exist "%cd%\icons\%%e.ico" (
+      reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%%e.ico" /f
+      echo reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%cd%\icons\%%e.ico" /f
+    )
   )
 )
 taskkill /f /im explorer.exe >nul 2>nul&start explorer.exe
-echo.&echo 注册图标完成 &echo.&goto begin
+echo.&echo 关联图标完成 &echo.&goto begin
 
 :reg_ext
 for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
@@ -61,7 +64,6 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
     reg add "hkcr\%ext_tag%.%%e" /ve /d "%%e" /f
     reg add "hkcr\%ext_tag%.%%e\defaulticon" /ve /d "%exe_path%" /f
     reg add "hkcr\%ext_tag%.%%e\shell\open\command" /ve /d """"%exe_path%""" """%%1%"""" /f
-    REM pause&goto begin
     for /f "skip=2 tokens=1,2,* delims= " %%a in ('reg query "hkcr\.%%e" /ve') do (
       if not "%%c" == "%ext_tag%" (
         reg add "hkcr\.%%e" /v "ext_backup" /d "%%c" /f >nul 2>nul
@@ -70,7 +72,7 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
   )
   assoc .%%e=%ext_tag%.%%e
 )
-echo.&echo 注册扩展名完成 &echo.&goto begin
+echo.&echo 关联扩展名完成 &echo.&goto begin
 
 
 :un_reg_ext
@@ -84,5 +86,5 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
   )
 )
 taskkill /f /im explorer.exe >nul 2>nul&start explorer.exe
-echo.&echo 卸载扩展名完成 &echo.&goto begin
+echo.&echo 取消关联扩展名完成 &echo.&goto begin
 

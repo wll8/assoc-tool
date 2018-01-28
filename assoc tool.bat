@@ -43,7 +43,7 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
     )
   )
 )
-taskkill /f /im explorer.exe >nul 2>nul&start explorer.exe
+assoc .=.>nul
 call :doc &echo.&echo  * 关联图标完成 &echo.&goto begin
 
 :reg_ext
@@ -58,7 +58,7 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
       )
     )
   )
-  assoc .%%e=%ext_tag%.%%e
+  assoc .%%e=%ext_tag%.%%e>nul
 )
 call :doc &echo.&echo  * 关联扩展名完成 &echo.&goto begin
 
@@ -73,7 +73,7 @@ for /f "eol=; delims=" %%e in ('type "%ext_path%"') do (
     )
   )
 )
-taskkill /f /im explorer.exe >nul 2>nul&start explorer.exe
+assoc .=.>nul
 call :doc &echo.&echo  * 取消关联扩展名完成 &echo.&goto begin
 
 
